@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1b4332">
+  <title>Fruit Identifiers — Learn what’s in your hand</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#home" aria-label="Fruit Identifiers home">
+      <span class="brand-mark">✳</span>
+      <span><strong>Fruit Identifiers</strong><small>LEARN BY LOOKING</small></span>
+    </a>
+    <button class="mobile-menu" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+      <a href="#home" data-route="home" class="nav-link active">Home</a>
+      <a href="#scan" data-route="scan" class="nav-link">Scan</a>
+      <a href="#results" data-route="results" class="nav-link">Results</a>
+      <a href="#check" data-route="check" class="nav-link">Fruit Check</a>
+      <a href="#history" data-route="history" class="nav-link">Scan History</a>
+    </nav>
+    <div class="header-status"><span class="status-dot"></span> MODEL READY TO LOAD</div>
+  </header>
+
+  <main>
+    <section class="screen active" id="screen-home" data-screen="home">
+      <div class="home-hero">
+        <div class="hero-copy">
+          <span class="eyebrow"><span class="eyebrow-dot"></span> A LITTLE SCIENCE. A LOT OF FRUIT.</span>
+          <h1>What fruit<br>is <em>that?</em></h1>
+          <p class="hero-lead">Point, snap, and discover. Fruit Identifiers uses a machine-learning model to recognize apples, bananas, and oranges from a photo.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#scan">Start scanning <span aria-hidden="true">↗</span></a>
+            <a class="text-link" href="#check">Try the fruit check <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="hero-proof"><span class="proof-icon">✓</span> Built for curious learners <span class="proof-sep">·</span> Camera + photo upload</div>
+        </div>
+        <div class="fruit-art" aria-label="Illustration of an apple, banana and orange">
+          <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+          <div class="fruit-emoji apple-art">🍎</div>
+          <div class="fruit-emoji banana-art">🍌</div>
+          <div class="fruit-emoji orange-art">🍊</div>
+          <span class="art-spark spark-a">✳</span><span class="art-spark spark-b">✦</span>
+          <div class="art-note"><span class="note-pip"></span> 3 fruits in our model</div>
+        </div>
+      </div>
+
+      <section class="intro-grid">
+        <article class="info-card problem-card">
+          <span class="card-kicker">01 / THE PROBLEM</span>
+          <div class="info-icon">🔎</div>
+          <h2>Fruit can look alike.</h2>
+          <p>It can be tricky to tell fruit apart at a glance, especially when you are learning their shapes, colors, and features.</p>
+        </article>
+        <article class="info-card solution-card">
+          <span class="card-kicker">02 / OUR SOLUTION</span>
+          <div class="info-icon">🧠</div>
+          <h2>Let AI take a look.</h2>
+          <p>Our image classifier compares your picture with patterns it learned for three fruit classes and shows its confidence for each one.</p>
+        </article>
+        <article class="info-card how-card">
+          <span class="card-kicker">03 / HOW TO TRY IT</span>
+          <div class="info-icon">📸</div>
+          <h2>Scan or upload.</h2>
+          <p>Use your camera or choose a photo. Keep one fruit centered, use good light, and check the prediction.</p>
+        </article>
+      </section>
+
+      <section class="fruit-strip">
+        <div><span class="section-kicker">OUR CLASSIFIER KNOWS</span><h2>Three fruits. One curious camera.</h2></div>
+        <div class="fruit-pills">
+          <span class="fruit-pill"><b>🍎</b> Apples</span>
+          <span class="fruit-pill"><b>🍌</b> Bananas</span>
+          <span class="fruit-pill"><b>🍊</b> Oranges</span>
+        </div>
+      </section>
+    </section>
+
+    <section class="screen" id="screen-scan" data-screen="scan">
+      <div class="page-top">
+        <div><span class="eyebrow"><span class="eyebrow-dot"></span> INTERACTIVE SCANNER LAB</span><h1>Scan &amp; recognize fruit</h1><p>Choose your camera or upload a photo to identify Apples, Bananas, or Oranges.</p></div>
+        <aside class="tip-card"><span class="tip-icon">☀</span><div><strong>Student explorer tip</strong><p>Hold your fruit steady in good lighting for the best prediction.</p></div></aside>
+      </div>
+      <div class="mode-switch" role="tablist" aria-label="Choose input method">
+        <button class="mode-tab selected" id="cameraTab" role="tab" aria-selected="true">▣ &nbsp; Camera scanner</button>
+        <button class="mode-tab" id="uploadTab" role="tab" aria-selected="false">▧ &nbsp; Image upload</button>
+      </div>
+      <div class="scan-layout">
+        <div class="scanner-card">
+          <div class="scanner-head"><div><span class="section-kicker">LIVE INPUT</span><h2 id="scannerTitle">Camera viewfinder</h2></div><span class="live-tag" id="cameraState"><i></i> CAMERA OFF</span></div>
+          <div class="viewfinder" id="viewfinder">
+            <div class="viewfinder-empty" id="viewfinderEmpty">
+              <div class="viewfinder-symbol">◎</div>
+              <strong>Your fruit goes here</strong>
+              <span>Start the camera or switch to image upload.</span>
+            </div>
+            <video id="cameraVideo" autoplay playsinline muted hidden></video>
+            <img id="uploadPreview" alt="Selected fruit preview" hidden>
+            <div class="scan-corners" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            <span class="viewfinder-label" id="viewfinderLabel">READY WHEN YOU ARE</span>
+          </div>
+          <div class="scan-actions">
+            <button class="btn btn-soft" id="startCamera">▶ Start camera</button>
+            <button class="btn btn-outline" id="stopCamera" disabled>■ Stop camera</button>
+            <button class="btn btn-primary identify-btn" id="captureIdentify" disabled>✦ Capture &amp; identify</button>
+          </div>
+          <div class="upload-controls" id="uploadControls" hidden>
+            <label class="btn btn-soft upload-button" for="imageInput">＋ Choose an image</label>
+            <input id="imageInput" type="file" accept="image/*" hidden>
+            <span class="upload-hint">JPG, PNG, or WebP · one fruit works best</span>
+          </div>
+          <p class="inline-status" id="scanStatus" role="status" aria-live="polite">The model loads the first time you identify an image.</p>
+        </div>
+        <aside class="scan-aside">
+          <div class="target-card">
+            <div class="aside-heading"><h3>Target fruits</h3><span class="count-tag">3 CLASSES</span></div>
+            <p>Our machine-learning classifier is trained to recognize these three fruit classes.</p>
+            <div class="target-fruits">
+              <div><span>🍎</span><strong>Apples</strong></div>
+              <div><span>🍌</span><strong>Bananas</strong></div>
+              <div><span>🍊</span><strong>Oranges</strong></div>
+            </div>
+          </div>
+          <div class="steps-card">
+            <span class="section-kicker">QUICK GUIDE</span><h3>Get a clear scan</h3>
+            <ol><li><b>01</b><span>Show one fruit at a time.</span></li><li><b>02</b><span>Keep it centered and in focus.</span></li><li><b>03</b><span>Use even, natural light.</span></li></ol>
+          </div>
+          <div class="model-card"><span class="model-icon">✳</span><div><strong>Teachable Machine model</strong><p>Predictions come from your connected image model, not sample data.</p></div></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-results" data-screen="results">
+      <div class="page-heading"><span class="eyebrow"><span class="eyebrow-dot"></span> YOUR SCAN RESULTS</span><h1>Here's what we found.</h1><p>See the model's top prediction and how strongly it matched each fruit class.</p></div>
+      <div class="results-layout">
+        <article class="result-main card-surface">
+          <div class="result-image-wrap"><img id="resultImage" alt="Your scanned fruit" hidden><div class="result-image-placeholder" id="resultImagePlaceholder">🍎<span>Your scan will appear here</span></div></div>
+          <div class="result-copy"><span class="section-kicker">TOP PREDICTION</span><div class="prediction-line"><span id="predictionEmoji">✳</span><h2 id="predictionName">No scan yet</h2></div><div class="confidence-big" id="confidenceBig">—<small>CONFIDENCE</small></div><p id="predictionMessage">Scan or upload a fruit image to see the model's prediction.</p><div class="advice-box"><span>💡</span><p id="fruitAdvice">A helpful fruit fact will appear here after your scan.</p></div></div>
+        </article>
+        <article class="confidence-card card-surface"><div class="aside-heading"><div><span class="section-kicker">MODEL BREAKDOWN</span><h2>Confidence by class</h2></div><span class="count-tag">LIVE OUTPUT</span></div><p class="muted">The three scores below are the model's actual prediction probabilities.</p>
+          <div class="bar-list" id="confidenceBars"><div class="bar-empty">Your class scores will appear after a scan.</div></div>
+          <div class="result-footnote" id="resultFootnote">No prediction has been made yet.</div>
+        </article>
+      </div>
+      <div class="result-actions"><button class="btn btn-primary" id="saveScan">＋ Save this scan</button><button class="btn btn-soft" id="nextItem">Next item →</button><button class="btn btn-outline" id="scanAgain">Scan again</button><span class="save-feedback" id="saveFeedback" role="status"></span></div>
+    </section>
+
+    <section class="screen" id="screen-check" data-screen="check">
+      <div class="page-heading"><span class="eyebrow"><span class="eyebrow-dot"></span> QUICK LEARNING ACTIVITY</span><h1>Fruit check</h1><p>Use your latest scan to play a quick matching activity.</p></div>
+      <div class="quiz-layout">
+        <article class="quiz-card card-surface">
+          <span class="section-kicker">YOUR TURN</span><div class="quiz-fruit" id="quizFruit">🍎</div>
+          <h2>Which fruit are you eating?</h2><p class="muted">Choose the fruit you think matches your latest scan.</p>
+          <div class="quiz-options" id="quizOptions">
+            <button data-fruit="Apples">🍎 <span>Apples</span></button><button data-fruit="Bananas">🍌 <span>Bananas</span></button><button data-fruit="Oranges">🍊 <span>Oranges</span></button>
+          </div>
+          <div class="quiz-feedback" id="quizFeedback" role="status" aria-live="polite">Scan a fruit first, then choose your answer.</div>
+          <button class="text-link" id="resetQuiz">Reset answer ↻</button>
+        </article>
+        <aside class="rules-card">
+          <span class="section-kicker">HOW THIS DEMO WORKS</span><h3>Clear, simple rules.</h3>
+          <ol><li><b>1</b><span>Scan an apple, banana, or orange.</span></li><li><b>2</b><span>Choose which fruit you think it is.</span></li><li><b>3</b><span>We compare your choice with the model's top prediction.</span></li></ol>
+          <p class="demo-note"><strong>Demo rule:</strong> “Correct” means your choice matches the model's top prediction. It is a learning activity, not a guarantee that the model is right.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-history" data-screen="history">
+      <div class="history-heading"><div class="page-heading"><span class="eyebrow"><span class="eyebrow-dot"></span> YOUR COLLECTION</span><h1>Scan history</h1><p>Your saved fruit discoveries, all in one place.</p></div><div class="history-total"><strong id="historyCount">0</strong><span>SAVED SCANS</span></div></div>
+      <div class="history-toolbar"><div><h2>Saved discoveries</h2><p id="historySub">No scans saved yet. Your collection starts at zero.</p></div><button class="btn btn-outline btn-small" id="undoSave" disabled>↶ Undo last save</button></div>
+      <div class="history-grid" id="historyGrid"><div class="history-empty"><span>🍃</span><h3>A fresh start.</h3><p>When you save a scan, it will show up here.</p><a class="btn btn-primary" href="#scan">Make your first scan</a></div></div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="footer-brand"><span class="brand-mark">✳</span><strong>Fruit Identifiers</strong></div><p>A small tool for big curiosity. Predictions are generated by our Teachable Machine image model.</p><span>APPLES · BANANAS · ORANGES</span></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
